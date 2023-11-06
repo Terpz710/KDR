@@ -51,7 +51,7 @@ class SQLiteProvider implements ProviderInterface{
 	 */
 	public function registerPlayer(Player $player): void{
 		$stmt = $this->killCounterDB->prepare("INSERT OR REPLACE INTO master (player, kills, deaths) VALUES (:player, :kills, :deaths)");
-		$stmt->bindValue(":player", $player->getLowerCaseName());
+		$stmt->bindValue(":player", $player->getName());
 		$stmt->bindValue(":kills", "0");
 		$stmt->bindValue(":deaths", "0");
 		$stmt->execute();
@@ -63,7 +63,7 @@ class SQLiteProvider implements ProviderInterface{
 	 */
 	public function addDeathPoints(Player $player, int $points = 1): void{
 		$stmt = $this->killCounterDB->prepare("INSERT OR REPLACE INTO master (player, kills, deaths) VALUES (:player, :kills, :deaths)");
-		$stmt->bindValue(":player", $player->getLowerCaseName());
+		$stmt->bindValue(":player", $player->getName());
 		$stmt->bindValue(":kills", $this->getPlayerKillPoints($player));
 		$stmt->bindValue(":deaths", $this->getPlayerDeathPoints($player) + $points);
 		$stmt->execute();
@@ -75,7 +75,7 @@ class SQLiteProvider implements ProviderInterface{
 	 */
 	public function addKillPoints(Player $player, int $points = 1): void{
 		$stmt = $this->killCounterDB->prepare("INSERT OR REPLACE INTO master (player, kills, deaths) VALUES (:player, :kills, :deaths)");
-		$stmt->bindValue(":player", $player->getLowerCaseName());
+		$stmt->bindValue(":player", $player->getName());
 		$stmt->bindValue(":kills", $this->getPlayerKillPoints($player) + $points);
 		$stmt->bindValue(":deaths", $this->getPlayerDeathPoints($player));
 		$stmt->execute();
@@ -86,7 +86,7 @@ class SQLiteProvider implements ProviderInterface{
 	 * @return bool
 	 */
 	public function playerExists(Player $player): bool{
-		$playerName = $player->getLowerCaseName();
+		$playerName = $player->getName();
 		$result = $this->killCounterDB->query("SELECT player FROM master WHERE player='$playerName';");
 		$array = $result->fetchArray(SQLITE3_ASSOC);
 		return empty($array) == false;
@@ -113,7 +113,7 @@ class SQLiteProvider implements ProviderInterface{
 	 * @return int
 	 */
 	public function getPlayerKillPoints(Player $player): int{
-		$playerName = $player->getLowerCaseName();
+		$playerName = $player->getName();
 		$result = $this->killCounterDB->query("SELECT kills FROM master WHERE player = '$playerName'");
 		$resultArray = $result->fetchArray(SQLITE3_ASSOC);
 		return (int) $resultArray["kills"];
@@ -124,7 +124,7 @@ class SQLiteProvider implements ProviderInterface{
 	 * @return int
 	 */
 	public function getPlayerDeathPoints(Player $player): int{
-		$playerName = $player->getLowerCaseName();
+		$playerName = $player->getName();
 		$result = $this->killCounterDB->query("SELECT deaths FROM master WHERE player = '$playerName'");
 		$resultArray = $result->fetchArray(SQLITE3_ASSOC);
 		return (int) $resultArray["deaths"];
